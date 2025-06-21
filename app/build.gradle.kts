@@ -68,4 +68,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     //Timber (Logging)
     implementation (libs.timber)
+    //Lottie Animation
+    implementation(libs.lottie.compose)
 }
