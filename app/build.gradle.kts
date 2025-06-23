@@ -86,6 +86,8 @@ dependencies {
     //ObjectBox
     implementation(libs.objectbox.android)
     implementation(libs.objectbox.kotlin)
+    //SplashScreen
+    implementation(libs.androidx.core.splashscreen)
 
 
 

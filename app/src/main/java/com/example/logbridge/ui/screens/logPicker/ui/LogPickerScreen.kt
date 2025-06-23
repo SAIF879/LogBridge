@@ -19,6 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -84,7 +87,7 @@ object LogPickerScreen : Screen {
 
 
         Scaffold(
-            topBar = { LogPickerTopAppBar(heading = "LogBridge" , onSecondaryAction = {
+            topBar = { LogPickerTopAppBar(heading = "History" , onSecondaryAction = {
                 navigator.push(SettingsScreen)
             }) },
             containerColor = Color(0xFF121416)
@@ -99,19 +102,29 @@ object LogPickerScreen : Screen {
                 Box(
                     modifier = Modifier.Companion.weight(1f).padding(bottom = 20.dp)
                 ) {
-                  when(uiState){
-                      is LogPickerUiState.Error -> {
+                    when (uiState) {
+                        is LogPickerUiState.Error -> {
+                            ErrorState(
+                                message = uiState.message,
+                                onRetry = { screenmodel.loadEntries() }
+                            )
+                        }
 
-                      }
-                      LogPickerUiState.Loading -> {
-                          LoadingIndicator()
-                      }
-                      is LogPickerUiState.Success -> {
-                          EntriesList(entries = uiState.entries, onClick = {
-                              navigator.push(LogDetailsScreen(it.filePath, fileName = it.fileName))
-                          })
-                      }
-                  }
+                        LogPickerUiState.Loading -> {
+                            LoadingIndicator()
+                        }
+
+                        is LogPickerUiState.Success -> {
+                            if (uiState.entries.isEmpty()) {
+                                EmptyState()
+                            } else {
+                                EntriesList(entries = uiState.entries, onClick = {
+                                    navigator.push(LogDetailsScreen(it.filePath, fileName = it.fileName))
+                                })
+                            }
+                        }
+                    }
+
                 }
                 FilePickerButton {
                     filePickerLauncher.launch(arrayOf("text/plain"))
@@ -163,3 +176,73 @@ fun EntriesList(entries: List<LocalEntries>, onClick: (LocalEntries) -> Unit) {
         item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
+
+@Composable
+fun EmptyState() {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            androidx.compose.material3.Icon(
+                imageVector = Icons.Default.Description,
+                contentDescription = "No Logs",
+                modifier = Modifier.size(72.dp),
+                tint = Color.Gray
+            )
+
+            androidx.compose.material3.Text(
+                text = "No Logs Yet",
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White
+            )
+
+            androidx.compose.material3.Text(
+                text = "Upload a .txt log file to get started.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+        }
+    }
+}
+
+@Composable
+fun ErrorState(message: String, onRetry: () -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            androidx.compose.material3.Icon(
+                imageVector = Icons.Default.ErrorOutline,
+                contentDescription = "Error",
+                modifier = Modifier.size(72.dp),
+                tint = Color.Red
+            )
+
+            androidx.compose.material3.Text(
+                text = "Oops!",
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White
+            )
+
+            androidx.compose.material3.Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+
+            androidx.compose.material3.Button(onClick = onRetry) {
+                androidx.compose.material3.Text(text = "Retry")
+            }
+        }
+    }
+}
+

@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.logbridge.ui.screens.logDetails.ui.LogDetailsScreen
 import com.example.logbridge.ui.screens.logPicker.ui.LogPickerScreen
@@ -17,6 +18,7 @@ import timber.log.Timber
          super.onCreate(savedInstanceState)
 
          enableEdgeToEdge()
+         installSplashScreen()
          val sharedData = handleSharedTextFile(intent)
          setContent {
              LogBridgeTheme {
@@ -53,11 +55,7 @@ import timber.log.Timber
 
  }
 
- // TODO:  1. delete the list ,
+ // TODO:
  //  add items to list wehn opend from intent ,
  //  proper ui display for logs ,
- //  app icon ,
- //  spalsh screen
- //  saved toast with proper icon ,
- //  handle error state and empty list for picker screen ,
  //  state operations when adding deleteing thing
