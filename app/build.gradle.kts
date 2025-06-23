@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)          //  Required for ObjectBox + KSP
+    alias(libs.plugins.objectbox)    //  Required for ObjectBox codegen
 }
 
 android {
@@ -41,6 +43,9 @@ android {
         compose = true
     }
 }
+ksp {
+    arg("objectbox.kotlin.plugin", "true")
+}
 
 dependencies {
 
@@ -62,8 +67,12 @@ dependencies {
     //voyager navigation
     implementation(libs.voyager.navigator)
     implementation(libs.voyager.screenmodel)
-    //koin Dependency injection
+    implementation(libs.voyager.koin)
+
+    //koin
+    implementation(libs.koin.core)
     implementation(libs.koin.android)
+    implementation(libs.koin.compose) // If you're using Jetpack Compose
     //Coroutines
     implementation(libs.kotlinx.coroutines.core)
     //Timber (Logging)
@@ -73,8 +82,10 @@ dependencies {
     //Gson
     implementation(libs.gson)
     //Icons
-    // In your build.gradle (module)
     implementation(libs.androidx.material.icons.extended)
+    //ObjectBox
+    implementation(libs.objectbox.android)
+    implementation(libs.objectbox.kotlin)
 
 
 

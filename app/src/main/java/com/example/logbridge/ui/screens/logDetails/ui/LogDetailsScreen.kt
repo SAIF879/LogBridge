@@ -1,4 +1,4 @@
-package com.example.logbridge.ui.screens.logDetails
+package com.example.logbridge.ui.screens.logDetails.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -51,17 +51,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.logbridge.data.local.LevelColors
+import com.example.logbridge.data.local.LocalEntries
 import com.example.logbridge.data.local.LogEntry
 import com.example.logbridge.ui.composables.LogPickerTopAppBar
+import com.example.logbridge.ui.screens.logDetails.util.LogDetailScreenModel
 import com.example.logbridge.utils.utiltyAndExtentions.formatTimestamp
 import com.google.gson.Gson
 
-data class LogDetailsScreen(val result: String) : Screen {
+data class LogDetailsScreen(val result: String, val fileName: String) : Screen {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+        val screenModel = koinScreenModel<LogDetailScreenModel>()
         val logEntries: List<LogEntry> = remember(result) {
             try {
                 Gson().fromJson(result, Array<LogEntry>::class.java).toList()
@@ -84,7 +91,17 @@ data class LogDetailsScreen(val result: String) : Screen {
         Scaffold(
             topBar = {
                 LogPickerTopAppBar(
-
+                    fileName = fileName,
+                    isDetailMode = true,
+                    onPrimaryAction = {
+                        navigator.pop()
+                    },
+                    onSecondaryAction = {
+                        screenModel.saveLogDetails(LocalEntries(
+                                fileName = fileName,
+                            filePath = result
+                        ))
+                    },
                 )
             },
             containerColor = MaterialTheme.colorScheme.background,
@@ -132,8 +149,19 @@ fun LogFilterBar(
         OutlinedTextField(
             value = searchQuery,
             onValueChange = onSearchChange,
-            leadingIcon = { Icon(Icons.Default.Search, null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
-            placeholder = { Text("Search logs...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            placeholder = {
+                Text(
+                    "Search logs...",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -159,12 +187,31 @@ fun LogFilterBar(
         ) {
             logLevels.forEach { level ->
                 val isSelected = level == selectedLevel
-                val (containerColor, contentColor) = when(level) {
-                    "ERROR" -> Pair(MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer)
-                    "WARN" -> Pair(MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.colorScheme.onTertiaryContainer)
-                    "INFO" -> Pair(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer)
-                    "DEBUG" -> Pair(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.onPrimaryContainer)
-                    else -> Pair(MaterialTheme.colorScheme.surfaceContainerHighest, MaterialTheme.colorScheme.onSurfaceVariant)
+                val (containerColor, contentColor) = when (level) {
+                    "ERROR" -> Pair(
+                        MaterialTheme.colorScheme.errorContainer,
+                        MaterialTheme.colorScheme.onErrorContainer
+                    )
+
+                    "WARN" -> Pair(
+                        MaterialTheme.colorScheme.tertiaryContainer,
+                        MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+
+                    "INFO" -> Pair(
+                        MaterialTheme.colorScheme.secondaryContainer,
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+
+                    "DEBUG" -> Pair(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+
+                    else -> Pair(
+                        MaterialTheme.colorScheme.surfaceContainerHighest,
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
 
                 FilterChip(
@@ -190,7 +237,7 @@ fun LogFilterBar(
                         enabled = true,
                         borderColor = MaterialTheme.colorScheme.outlineVariant,
                         selectedBorderColor = MaterialTheme.colorScheme.outline,
-                        selected =isSelected,
+                        selected = isSelected,
                     )
                 )
             }
@@ -219,21 +266,25 @@ fun LogEntryCard(entry: LogEntry) {
             content = MaterialTheme.colorScheme.onErrorContainer,
             icon = Icons.Default.Error
         )
+
         "WARN" -> LevelColors(
             container = MaterialTheme.colorScheme.tertiaryContainer,
             content = MaterialTheme.colorScheme.onTertiaryContainer,
             icon = Icons.Default.Warning
         )
+
         "INFO" -> LevelColors(
             container = MaterialTheme.colorScheme.secondaryContainer,
             content = MaterialTheme.colorScheme.onSecondaryContainer,
             icon = Icons.Default.Info
         )
+
         "DEBUG" -> LevelColors(
             container = MaterialTheme.colorScheme.primaryContainer,
             content = MaterialTheme.colorScheme.onPrimaryContainer,
             icon = Icons.Default.BugReport
         )
+
         else -> LevelColors(
             container = MaterialTheme.colorScheme.surfaceContainerHigh,
             content = MaterialTheme.colorScheme.onSurface,

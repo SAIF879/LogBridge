@@ -4,7 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,13 +23,15 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogPickerTopAppBar(
-    onMenuClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {}
+    onPrimaryAction: () -> Unit = {},
+    onSecondaryAction: () -> Unit = {},
+    isDetailMode : Boolean = false,
+    fileName: String? = null
 ) {
     TopAppBar(
         title = {
             Text(
-                text = "Log Picker",
+                text = fileName ?: "Log Picker",
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = 0.5.sp
@@ -36,21 +41,22 @@ fun LogPickerTopAppBar(
         },
         navigationIcon = {
             Icon(
-                imageVector = Icons.Rounded.Menu,
-                contentDescription = "Menu",
+                imageVector = if (isDetailMode) Icons.AutoMirrored.Rounded.ArrowBack
+                              else Icons.Rounded.Menu,
+                contentDescription = if (isDetailMode) "Arrow_back" else "Menu",
                 modifier = Modifier
                     .padding(start = 16.dp)
-                    .clickable { onMenuClick() },
+                    .clickable { onPrimaryAction() },
                 tint = Color(0xFF4DA6FF)
             )
         },
         actions = {
             Icon(
-                imageVector = Icons.Rounded.Settings,
+                imageVector = if (isDetailMode) Icons.Rounded.Save else Icons.Rounded.Settings,
                 contentDescription = "Settings",
                 modifier = Modifier
                     .padding(end = 16.dp)
-                    .clickable { onSettingsClick() },
+                    .clickable { onSecondaryAction() },
                 tint = Color(0xFFA0A0A0)
             )
         },

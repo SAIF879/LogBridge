@@ -6,28 +6,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import cafe.adriel.voyager.navigator.Navigator
-import com.example.logbridge.ui.screens.logDetails.LogDetailsScreen
-import com.example.logbridge.ui.screens.logPicker.LogPickerScreen
+import com.example.logbridge.ui.screens.logDetails.ui.LogDetailsScreen
+import com.example.logbridge.ui.screens.logPicker.ui.LogPickerScreen
 import com.example.logbridge.ui.theme.LogBridgeTheme
+import com.example.logbridge.utils.utiltyAndExtentions.getFileNameFromUri
 import timber.log.Timber
 
  class MainActivity : ComponentActivity() {
      override fun onCreate(savedInstanceState: Bundle?) {
          super.onCreate(savedInstanceState)
+
          enableEdgeToEdge()
-
-         val sharedText = handleSharedTextFile(intent)
-
+         val sharedData = handleSharedTextFile(intent)
          setContent {
              LogBridgeTheme {
                  Navigator(
-                     if (sharedText != null) {
+                     if (sharedData != null) {
+                         val (fileName, textContent) = sharedData
                          val result = try {
-                             LogProcessor.processLog(sharedText)
+                             LogProcessor.processLog(textContent)
                          } catch (e: Exception) {
                              "Error: ${e.message}"
                          }
-                         LogDetailsScreen(result)
+                         LogDetailsScreen(result = result, fileName = fileName)
                      } else {
                          LogPickerScreen
                      }
@@ -36,19 +37,18 @@ import timber.log.Timber
          }
      }
 
-     override fun onNewIntent(intent: Intent) {
-         super.onNewIntent(intent)
-         // Optional: if you want to handle new files while app is already open
-         // You'll need a shared ViewModel or Navigator ref to push new screen
+     private fun handleSharedTextFile(intent: Intent?): Pair<String, String>? {
+         val uri = intent?.data ?: return null
+
+         return runCatching {
+             val fileName = getFileNameFromUri(this, uri) ?: "shared_file.txt"
+             val content = contentResolver.openInputStream(uri)
+                 ?.bufferedReader()
+                 ?.use { it.readText() }
+             if (content.isNullOrEmpty()) null else fileName to content
+         }.onFailure {
+             Timber.e(it, "Error reading shared file")
+         }.getOrNull()
      }
 
-     private fun handleSharedTextFile(intent: Intent?): String? {
-         val uri = intent?.data ?: return null
-         return try {
-             contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
-         } catch (e: Exception) {
-             Timber.e(e, "Error reading shared .txt file")
-             null
-         }
-     }
  }
