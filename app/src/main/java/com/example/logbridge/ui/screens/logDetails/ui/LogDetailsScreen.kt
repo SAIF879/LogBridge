@@ -91,7 +91,7 @@ data class LogDetailsScreen(val result: String, val fileName: String) : Screen {
         Scaffold(
             topBar = {
                 LogPickerTopAppBar(
-                    fileName = fileName,
+                    heading = fileName,
                     isDetailMode = true,
                     onPrimaryAction = {
                         navigator.pop()

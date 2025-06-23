@@ -41,6 +41,7 @@ import com.example.logbridge.ui.composables.LogPickerTopAppBar
 import com.example.logbridge.ui.screens.logDetails.ui.LogDetailsScreen
 import com.example.logbridge.ui.screens.logPicker.util.LogPickerScreenModel
 import com.example.logbridge.ui.screens.logPicker.util.LogPickerUiState
+import com.example.logbridge.ui.screens.settings.ui.SettingsScreen
 import com.example.logbridge.utils.utiltyAndExtentions.getFileNameFromUri
 import timber.log.Timber
 
@@ -83,7 +84,9 @@ object LogPickerScreen : Screen {
 
 
         Scaffold(
-            topBar = { LogPickerTopAppBar() },
+            topBar = { LogPickerTopAppBar(heading = "LogBridge" , onSecondaryAction = {
+                navigator.push(SettingsScreen)
+            }) },
             containerColor = Color(0xFF121416)
         ) { paddingValues ->
             Column(

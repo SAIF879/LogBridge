@@ -52,3 +52,12 @@ import timber.log.Timber
      }
 
  }
+
+ // TODO:  1. delete the list ,
+ //  add items to list wehn opend from intent ,
+ //  proper ui display for logs ,
+ //  app icon ,
+ //  spalsh screen
+ //  saved toast with proper icon ,
+ //  handle error state and empty list for picker screen ,
+ //  state operations when adding deleteing thing

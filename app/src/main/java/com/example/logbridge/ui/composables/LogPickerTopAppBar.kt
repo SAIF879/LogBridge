@@ -23,15 +23,16 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogPickerTopAppBar(
+    heading : String  ,
     onPrimaryAction: () -> Unit = {},
     onSecondaryAction: () -> Unit = {},
     isDetailMode : Boolean = false,
-    fileName: String? = null
+    hideSecondaryAction : Boolean = false
 ) {
     TopAppBar(
         title = {
             Text(
-                text = fileName ?: "Log Picker",
+                text = heading,
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = 0.5.sp
@@ -51,14 +52,16 @@ fun LogPickerTopAppBar(
             )
         },
         actions = {
-            Icon(
-                imageVector = if (isDetailMode) Icons.Rounded.Save else Icons.Rounded.Settings,
-                contentDescription = "Settings",
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .clickable { onSecondaryAction() },
-                tint = Color(0xFFA0A0A0)
-            )
+            if (!hideSecondaryAction) {
+                Icon(
+                    imageVector = if (isDetailMode) Icons.Rounded.Save else Icons.Rounded.Settings,
+                    contentDescription = "Settings",
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .clickable { onSecondaryAction() },
+                    tint = Color(0xFFA0A0A0)
+                )
+            }
         },
         modifier = Modifier
             .shadow(elevation = 8.dp, shape = RectangleShape)
