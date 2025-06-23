@@ -70,4 +70,12 @@ dependencies {
     implementation (libs.timber)
     //Lottie Animation
     implementation(libs.lottie.compose)
+    //Gson
+    implementation(libs.gson)
+    //Icons
+    // In your build.gradle (module)
+    implementation(libs.androidx.material.icons.extended)
+
+
+
 }
