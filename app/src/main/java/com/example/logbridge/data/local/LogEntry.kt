@@ -1,4 +1,4 @@
-package com.example.logbridge.data
+package com.example.logbridge.data.local
 
 data class LogEntry(
     val timestamp: String?,

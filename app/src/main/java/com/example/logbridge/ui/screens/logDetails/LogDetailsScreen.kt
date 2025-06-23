@@ -2,32 +2,60 @@ package com.example.logbridge.ui.screens.logDetails
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import com.example.logbridge.data.LogEntry
-import com.example.logbridge.ui.composables.FilePickerButton
+import com.example.logbridge.data.local.LevelColors
+import com.example.logbridge.data.local.LogEntry
 import com.example.logbridge.ui.composables.LogPickerTopAppBar
-import com.example.logbridge.ui.theme.*
+import com.example.logbridge.utils.utiltyAndExtentions.formatTimestamp
 import com.google.gson.Gson
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 data class LogDetailsScreen(val result: String) : Screen {
 
@@ -37,14 +65,14 @@ data class LogDetailsScreen(val result: String) : Screen {
         val logEntries: List<LogEntry> = remember(result) {
             try {
                 Gson().fromJson(result, Array<LogEntry>::class.java).toList()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 emptyList()
             }
         }
 
         var searchQuery by remember { mutableStateOf("") }
         var selectedLevel by remember { mutableStateOf("ALL") }
-        val context = LocalContext.current
+
 
         val filteredEntries = logEntries.filter { entry ->
             (selectedLevel == "ALL" || entry.level == selectedLevel) &&
@@ -371,19 +399,5 @@ fun EmptyLogState() {
     }
 }
 
-// Extension to format timestamp
-fun String.formatTimestamp(): String {
-    return try {
-        val formatter = DateTimeFormatter.ofPattern("MMM dd, HH:mm:ss")
-        val parsed = LocalDateTime.parse(this, DateTimeFormatter.ISO_DATE_TIME)
-        parsed.format(formatter)
-    } catch (e: Exception) {
-        this
-    }
-}
 
-data class LevelColors(
-    val container: Color,
-    val content: Color,
-    val icon: ImageVector
-)
+
