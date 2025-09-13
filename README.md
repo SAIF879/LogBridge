@@ -43,7 +43,11 @@ It is designed for developers and power users who often deal with messy log outp
 ---
 
 ## 📱 Screenshots  
-> _(Add screenshots or a demo gif here when available)_  
+![WhatsApp Image 2025-09-13 at 13 37 44](https://github.com/user-attachments/assets/061e811a-db1e-4b43-a4f3-6c5026639806)
+![WhatsApp Image 2025-09-13 at 13 37 44 (1)](https://github.com/user-attachments/assets/368b2ae4-9fc5-4be7-bf6c-39fc28991fcc)
+![WhatsApp Image 2025-09-13 at 13 37 45](https://github.com/user-attachments/assets/9093e51e-0ffc-471a-9bd6-0a1a53540279)
+
+
 
 ---
 
